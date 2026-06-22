@@ -69,5 +69,12 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-};
+
+protected:
+	/** 타 모듈(Test)에서 정의된 UCharacterData를 참조하기 위한 포인터 변수
+	 * 전방 선언(class)을 사용
+	 */
+	UPROPERTY()
+	class UCharacterData* MyCharacterData;
+}; 
 

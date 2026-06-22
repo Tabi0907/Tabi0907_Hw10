@@ -11,6 +11,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "TestActor.h"
+//Test 모듈의 데이터 클래스 헤더를 참조합
+#include "CharacterData.h" 
+#include "Engine/Engine.h" // GEngine 화면 출력
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -57,9 +60,10 @@ AModuleAndPluginCharacter::AModuleAndPluginCharacter()
 
 void AModuleAndPluginCharacter::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
 
+	
+	// Test 모듈의 TestActor를 월드에 스폰 및 검증
 	if (GetWorld())
 	{
 		FActorSpawnParameters SpawnParams;
@@ -68,9 +72,41 @@ void AModuleAndPluginCharacter::BeginPlay()
 		// 주 모듈에서 다른 모듈(Test)의 액터를 스폰하는 핵심 로직
 		GetWorld()->SpawnActor<ATestActor>(ATestActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 	}
+
+	
+	//  UObject 자식 클래스를 데이터 저장용 클래스로 활용 및 검증
+
+	// 1. UObject 기반 클래스는 컴포넌트나 액터가 아니므로 NewObject를 통해 메모리에 동적 생성
+	MyCharacterData = NewObject<UCharacterData>(this);
+
+	// 2. 데이터 클래스가 성공적으로 생성되었는지 방어 코드(Null Check) 작성
+	if (MyCharacterData)
+	{
+		// 3. 데이터 저장용 클래스(UCharacterData) 내부 속성값을 참조하여 디버그 문자열 조립
+		FString DataLogMessage = FString::Printf(
+			TEXT("[Character Data Loaded] 이름: %s | HP: %.1f | 공격력: %d"),
+			*MyCharacterData->ResearcherName,
+			MyCharacterData->MaxHp,
+			MyCharacterData->AttackDamage
+		);
+
+		// 4. PlayerCharacter 클래스에서 해당 속성값을 화면(Viewport)에 주황색으로 출력
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,              // 고유 Key (기존 메시지를 덮어쓰지 않고 새로 띄움)
+				15.0f,           // 화면에 노출될 시간 (초 단위)
+				FColor::Orange,  // 디버그 텍스트 색상 (주황색)
+				DataLogMessage   // 출력할 문자열
+			);
+		}
+
+		// 5. 출력 로그(Output Log) 창에서도 확인
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *DataLogMessage);
+	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 // Input
 
 void AModuleAndPluginCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
