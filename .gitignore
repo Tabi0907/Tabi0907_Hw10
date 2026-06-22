@@ -1,0 +1,15 @@
+# 어느 경로에 있든 이 이름의 폴더는 전부 무시
+**/Binaries/
+**/Intermediate/
+**/Saved/
+**/DerivedDataCache/
+**/Build/
+**/.vs/
+
+# 기타 무시할 확장자들
+*.log
+*.obj
+*.pdb
+*.sln
+*.suo
+*.idea/
